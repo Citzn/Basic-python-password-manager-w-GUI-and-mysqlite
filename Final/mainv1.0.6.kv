@@ -1,0 +1,671 @@
+## ===================== STANDARD STYLE WIDGET ELEMENTS ======================
+## These standard styled widgets are pre-editted
+## widget elements used in GUI components.
+## They are templates which don't need to be followed
+## but can be left unedited, increases productivity.
+
+## Defualt Button, standard styles used in all pages
+<DefaultButton@Button>:
+    pos_hint: {"center_x": 0.5}
+    width: 145
+    height: 65
+    color: 0,0,0,1
+    size_hint: None, None
+    spacing: 20
+    font_size: 25
+    background_normal: "Assets/normal.png"
+    background_down: "Assets/down.png"
+
+## Default Label, standard label style used in all pages
+<DefaultLabel@Label>
+    ## Black colored text
+    color: 0,0,0,1
+
+## Default Title, standard title style used in all pages
+## Inherits the qualities of Default label so color is uniform
+<DefaultTitle@DefaultLabel>:
+    ## Align the text horizontally in the center
+    halign: "center"
+
+    ## Bolds the font
+    bold: True
+    font_size: 75
+
+    ## maximum height between lines of a text
+    line_height: 0.75
+    pos_hint: {"center_x": 0.5}
+    size_hint: 1, None
+
+    ## Texture size the the how much space the text can take
+    ## Set the height to the height of the texture size
+    height: self.texture_size[1]
+
+## Default Text Input style, standard text input across all pages
+<DefaultTextInput@TextInput>:
+    ## Centre the text in the input box
+    padding: [6, self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 6, 0]
+    ## Makes it so you can't have multi-line inputted text
+    multiline: False
+    ## Makes the cursor color black
+    cursor_color: 0,0,0,1
+    write_tab: False
+
+## Password Input inherits the visual qualitues of DefaultTextInput
+## But this TextInput class will hide the text for password inputting
+<PasswordInput@DefaultTextInput>:
+    ## Make so it obscures text typed into it's text box
+    password: True
+
+## This is a Label with a border meant for Info retainer widgets
+## Inherits the qualities of Default label so color is uniform
+<BorderLabel@DefaultLabel>:
+    canvas.before:
+        ## Color of the border
+        Color:
+            ## Black
+            rgba: 0,0,0,1
+        ## Border
+        Line:
+            width: 1
+            rectangle: (self.x, self.y, self.width, self.height)
+    text_size: 250, 50
+    halign: "center"
+    valign: "middle"
+
+## ===================== Dynamic classes meant for situational use ======================
+## i.e custom popup messages to respond to
+## user input or display user inputted information.
+
+
+## This is a popup class called when a popup needs to be created
+<PopupBox@Popup>
+    title: ""   
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: ""
+            id: context
+            halign: "center"
+        Button:
+            text: "Close"
+            on_release: root.dismiss()
+
+## This is the widget which holds the information for password record.
+## Uses overall FloatLayout so everything can be placed relatively.
+<PasswordInfoRetainer@FloatLayout>:
+    ## Have the width scale with the window but keep the height fixed (None)
+    size_hint: 1, None
+    size: 500, 180
+
+    ## Make a border of the entire root widget
+    canvas.before:
+        ## Color of the border
+        Color:
+            ## Black
+            rgba: 0,0,0,1
+        ## Border
+        Line:
+            width: 1
+            rectangle: (self.x, self.y, self.width, self.height)
+
+    ## This Gridlayout is where the info for the
+    ## platform, username and password is displayed.
+    GridLayout:
+        ## scale the Gridlayout to 75% of the parent widget
+        ## width and 100% of the height of the parent widget.
+        size_hint: 0.75, 1
+
+        ## Position the Gridlayout to be relatively to the left
+        ## of the center of the GUI and centerered vertically.
+        pos_hint: {"center_x": 0.4, "center_y": 0.5}
+
+        ## Have the widgets placed from Left to right and top to bottom.
+        ## (So first Left then right then top then
+        ## repeat left to right but on the bottom)
+        orientation: "lr-tb"
+
+        ## Have two columns for This gridlayout.
+        cols: 2
+
+        ## The label for platform
+        DefaultLabel:
+            size_hint_x: 0.45
+            text: "Platform:"
+
+        ## This one will display platform name saved
+        ## from a stored username and password set.
+        BorderLabel:
+            text: "xxx"
+            id: platformName
+
+        ## The label for username
+        DefaultLabel:
+            text: "Username:"
+            size_hint_x: 0.45
+
+        ## This one will display username saved from
+        ## a stored username and password set.
+        BorderLabel:
+            text: "xxx"
+            id: username
+        
+        ## The label for password
+        DefaultLabel:
+            text: "Password:"
+            size_hint_x: 0.45
+
+        ## This one will display password saved
+        ## from a stored username and password set.
+        BorderLabel:
+            text: "xxx"
+            id: passwordName
+    
+    ## This gridlayout holds the Button(s) which will
+    ## interact with the infomation it's self (i.e delete it)
+    GridLayout:
+        ## Give space between children in grid
+        spacing: [0, 7]
+
+        ## spacing between gridlayout and other widgets
+        padding: [0, 7, 0, 7]
+        ## Make the gridlayout one column
+        cols: 1
+        ## Position this widget more to the right relative to the center
+        ## of the parent widget on the x axis and vertically in the middle
+        ## relative to the parent window on y axis.
+
+        pos_hint: {"center_x": 0.9,"center_y": 0.55}
+        size_hint: 0.2, 0.5
+        
+        ## If the user wants to update some out of date details
+        ## about an existing password they can click here
+        DefaultButton:
+            text: "Edit"
+            font_size: 15
+            width: 95
+            height: 50
+            ## Fires a function when clicked to remove the info from the
+            ## stored_password_information table.
+            on_release: root.edit_record()
+
+        ## This will remove the entire info retainer widget from the
+        ## password manager menu they the user doesn't need it anymore
+        DefaultButton:
+            text: "Remove"
+            font_size: 15
+            width: 95
+            height: 50
+
+            ## Fires a function when clicked to remove the
+            ## info in the stored_password_information table.
+            on_release: root.remove_record()
+
+
+## ===================== App page components ======================
+## This section is the GUI component instructions for these pages
+
+
+## Home page UI instructions
+<HomePage>:
+    BoxLayout:
+        ## Orientate all children elements from top to bottom
+        orientation: "vertical"
+
+        ## Make the background color of this page white
+        canvas.before:
+            ## Create a rectangle the size of and pos of the Window
+            Rectangle:
+                size: self.size
+                pos: self.pos
+            ## Color the rectangle white
+            Color:
+                rgba: 1,1,1,1
+            
+        ## Title
+        DefaultTitle:
+            text: "Password\nmanager"
+
+        ## Subheading slogan
+        Label:
+            text: "All your passwords in one place!"
+            halign: "center"
+            color: 0,0,0,1
+            font_size: 15
+            pos_hint: {"center_x": 0.5}
+            size_hint: 1, None
+            height: self.texture_size[1]
+
+        ## Navigation buttons / Bottom section of the page
+        BoxLayout:
+            ## the negative space between children's of the BoxLayout.
+            spacing: 7
+
+            ## The negative space between the BoxLayout
+            ## and other elements on the page.
+            padding: [0, 7, 0, 27]
+
+            ## Size_hint is the % the widget takes
+            ## up based on it's parent window.
+            size_hint: 1, None
+
+            ## Sets the height to 250
+            height: 250
+
+            ## Orentate the Buttons to be placed top to bottom.
+            orientation: "vertical"
+
+            ## Login button if they already have an account
+            ## they can navigte to the login page here.
+            DefaultButton:
+                text: "Login"
+                on_release: root.manager.current = "Login page"
+
+            ## Signup button if they don't have an account
+            ## they can navigate to the signup page here to make one.
+            DefaultButton:
+                text: "Signup"
+                on_release: root.manager.current = "Signup page"
+
+            ## Exit button if they've finished their business
+            ## they can click here to exit the program.
+            DefaultButton:
+                text: "Exit"
+                on_release: app.exit()
+
+
+## Login page UI instructions.
+<LoginPage>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: 1,1,1,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        DefaultTitle:
+            text: "Password\nmanager"
+        
+        ## Main body of the page containining the
+        ## Username and password entry fields to login.
+        BoxLayout:
+            pos_hint: {"center_x": 0.5}
+            size_hint: 0.6, None
+            height: 100
+            GridLayout:
+                spacing: [15,7]
+                padding: [0, 7, 0, 7]
+                pos_hint: {"center_x": 0.5, "center_y" : 0.5}
+                cols: 2
+
+                ## Orentate everything left-right, top to bottom.
+                orientation: "lr-tb"
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Username"
+                DefaultTextInput:
+                    id: username
+                    hint_text: "Username"
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Password"
+                PasswordInput:
+                    id: password
+                    hint_text: "Password"
+
+        ## Bottom the part of the page containing the
+        ## navigation buttons to signup page and home page.
+        BoxLayout:
+            size_hint: 1, None
+            height: 225
+            pos_hint: {"center_x": 0.5}
+            spacing: 7
+            padding: [0, 7, 0, 7]
+            orientation: "vertical"
+
+            ## When the User has filled in their login details login them in.
+            DefaultButton:
+                text: "Login"
+                on_release: root.login()
+            
+            ## If the User doesn't have an account yet
+            ## they can click here to make one.
+            DefaultButton:
+                text: "Signup"
+
+                ## app.change_page() behaves DIFFERENTLY to
+                ## root.manager.current This function is
+                ## ONLY for ones with input boxes.
+                on_release: app.change_page(root, "Signup page")
+
+            ## This button navigates back to home page
+            DefaultButton:
+                text: "Back"
+
+                ## app.change_page() behaves DIFFERENTLY to root.manager.current
+                ## This function is ONLY for ones with input boxes
+                on_release: app.change_page(root, "Home page")
+
+
+## Sign up page
+<SignupPage>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: 1,1,1,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        DefaultTitle:
+            text: "Password\nmanager"
+
+        ## Main body section of the page containing the
+        ## account creation boxes that need to be filled in
+        BoxLayout:
+            size_hint: 0.6, 1
+            pos_hint: {"center_x": 0.5}
+            canvas.before:
+                Color:
+                    rgba: 1,1,1,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            GridLayout:
+                spacing: [15,7]
+                padding: [0, 7, 0, 7]
+                cols: 2
+
+                ## Orentate everything left-right, top to bottom.
+                orientation: "lr-tb"
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Username"
+                DefaultTextInput:
+                    hint_text: "Username"
+                    id: username
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Password"
+                PasswordInput:
+                    hint_text: "Password"
+                    id: password
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Confirm\npassword"
+                    halign: "center"
+
+                PasswordInput:
+                    hint_text: "Confirm Password"
+                    id: confirmPassword
+                    
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Age"
+
+                DefaultTextInput:
+                    hint_text: "Age"
+                    id: age
+
+        ## Bottom section which contians the navigation buttons
+        ## for the login page and home page
+        BoxLayout:
+            size_hint: 1, None
+            height: 215
+            pos_hint: {"center_x": 0.5}
+            spacing: 7
+            padding: [0, 7, 0, 7]
+            orientation: "vertical"
+
+            ## When the user has filled in everything needed to
+            ## make an account they will push this button.
+            DefaultButton:
+                text: "Signup"
+                ## When fired it will get the input from the user taken
+                ## from the input boxes and respond approperiately.
+                on_release: root.create_account()
+
+            ## If the User already has an accoun they can
+            ## just click here to go to login page.
+            DefaultButton:
+                text: "Login"
+
+                ## app.change_page() behaves DIFFERENTLY to root.manager.current
+                ## This function is ONLY for ones with input boxes.
+                on_release: root.manager.current = app.change_page(root, "Login page")
+
+            ## Navigates back to the home page
+            DefaultButton:
+                text: "Back"
+
+                ## app.change_page() behaves DIFFERENTLY to root.manager.current
+                ## This function is ONLY for ones with input boxes
+                on_release: app.change_page(root, "Home page")
+
+
+<PasswordManagerMenu>:
+    ## BoxLayout is used here so everything inside is orientated
+    ## from top to bottom and automatically centered in the middle.
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                ## Makes the page background the color white
+                rgba: 1,1,1,1
+            Rectangle:
+                ## Tells the UI that the background color
+                ## should cover the entire app window.
+                pos: self.pos
+                size: self.size
+
+        ## The header of the Password manager menu page, floatlayout
+        ## is used so everything is positioned relatively.
+        FloatLayout:
+            size_hint: 1, 0.31
+            canvas.before:
+                Color:
+                    ## Makes the page background the color white
+                    rgba: 0,0,0,0.1
+                Rectangle:
+                    ## Tells the UI that the background color
+                    ## should cover the entire app window.
+                    pos: self.pos
+                    size: self.size
+            ## Title
+            Label:
+                color: 0,0,0,1
+                text: "Passwords:"
+                size_hint: 0.8, 0.25
+                font_size: 37.5
+                bold: True
+                pos_hint: {"center_x": 0.5, "center_y": 0.7}
+
+            ## Takes the user to the add password page
+            ## where they can save password info to their account.
+            DefaultButton:
+                text: "Add"
+                pos_hint: {"center_x": 0.8, "center_y": 0.27}
+                on_release: root.manager.current = "Add password window"
+
+            ## Logs out of their account.
+            DefaultButton:
+                text: "Logout"
+                on_release: root.logout()
+                pos_hint: {"center_x": 0.2, "center_y": 0.27}
+
+        ## This is the scroll section of the page, this
+        ## will make the gridlayout below scrollible.
+        ScrollView:
+            scroll_type: ['bars', 'content']
+            do_scroll_x: False
+            do_scroll_y: True
+        
+            ## User 100% of the parent widget width 
+            ## and 80% of the parent height.
+            size_hint: 1, 0.8
+
+            ## This is the body section of the page
+            ## Here this is where info retainers will be attached
+            ## to display the User's saved password infomation.
+            GridLayout:
+                size_hint: 1, None
+                orientation: "tb-lr"
+                height: self.minimum_height
+                cols: 1
+                id: main
+
+
+## Add password window, Here users will input
+## the username and password they want to save.
+<AddPasswordWindow>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: 1,1,1,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        DefaultTitle:
+            text: "Save your\npassword!"
+
+        ## Body section of the page which contians the input boxes
+        ## where users will enter the details of password information to save.
+        BoxLayout:
+            pos_hint: {"center_x": 0.5}
+            size_hint: 0.6, None
+            height: 125
+            GridLayout:
+                spacing: [15,7]
+                padding: [0, 7, 0, 7]
+                pos_hint: {"center_x": 0.5, "center_y" : 0.5}
+                cols: 2
+
+                ## Orentate everything left-right, top to bottom.
+                orientation: "lr-tb"
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Platform"
+                DefaultTextInput:
+                    id: platformInput
+                    hint_text: "Platform"
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Username"
+                DefaultTextInput:
+                    id: usernameInput
+                    hint_text: "Username"
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Password"
+                DefaultTextInput:
+                    id: passwordInput
+                    hint_text: "Password"
+        
+        ## Bottom section of the page which holds the navigation 
+        ## buttons to go back the password manager menu page
+        ## and the button to save their password details.
+        BoxLayout:
+            size_hint: 1, None
+            height: 210
+            pos_hint: {"center_x": 0.5}
+            spacing: 7
+            padding: [0, 7, 0, 57]
+            orientation: "vertical"
+
+            ## This button is for when the user has detailed
+            ## their password infomation enough and wants to save
+            DefaultButton:
+                text: "Save"
+                font_size: 25
+                on_release: root.create_record()
+
+            ## This is if the user changed their mind and
+            ## wants to go back to previous page.
+            DefaultButton:
+                text: "Cancel"
+
+                ## app.change_page() behaves DIFFERENTLY to root.manager.current
+                ## This function is ONLY for ones with input boxes
+                on_release: app.change_page(root, "Password manager menu")
+
+
+<EditWindow>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        canvas.before:
+            Color:
+                rgba: 1,1,1,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+
+        DefaultTitle:
+            text: "Edit your\nsave!"
+        
+        ## Body section of the edit window page contians the boxes need to be
+        ## filled when the user wants to edit the details to their password.
+        BoxLayout:
+            pos_hint: {"center_x": 0.5}
+            size_hint: 0.6, None
+            height: 125
+            GridLayout:
+                spacing: [15,7]
+                padding: [0, 7, 0, 7]
+                pos_hint: {"center_x": 0.5, "center_y" : 0.5}
+                cols: 2
+                orientation: "lr-tb"
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Platform"
+                DefaultTextInput:
+                    id: platformInput
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Username"
+                DefaultTextInput:
+                    id: usernameInput
+                DefaultLabel:
+                    size_hint: 0.4, 1
+                    text: "Password"
+                DefaultTextInput:
+                    id: passwordInput
+
+        ## Bottom section of the page where the user will be able to
+        ## go back to password manager menu or save their edits.
+        BoxLayout:
+            size_hint: 1, None
+            height: 210
+            pos_hint: {"center_x": 0.5}
+            spacing: 7
+            padding: [0, 7, 0, 57]
+            orientation: "vertical"
+
+            ## This button is for saving the user's
+            ## edit to existing password infomation.
+            DefaultButton:
+                text: "Save changes"
+                font_size: 20
+                on_release: root.save_edit()
+            
+            ## This button is for users changing their mind
+            ## and going back to the password manager menu.
+            DefaultButton:
+                text: "Cancel"
+
+                ## app.change_page() behaves DIFFERENTLY to root.manager.current
+                ## This function is ONLY for ones with input boxes
+                on_release: app.change_page(root, "Password manager menu")
