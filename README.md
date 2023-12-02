@@ -8,3 +8,12 @@ Learned:
 - General idea behind SQL databases through mysqlite,
 - Better grasp on OOP - Knowing how to with GUIs in mind I spent less time wrangling this GUI library than tkinter,
 - Overwriting imported library classes for custom jobs that I needed.
+
+How to use?
+- python -m pip install --upgrade pip setuptools virtualenv
+- python -m virtualenv kivy_venv
+- kivy_venv\Scripts\activate
+- python -m pip install "kivy[base]" kivy_examples
+
+
+
